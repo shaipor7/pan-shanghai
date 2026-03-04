@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pan&Por in Shanghai 💗</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: #FFF5F7;
+            color: #3a3a3a;
+            line-height: 1.7;
+        }
+
+        /* ─── Hero ─── */
+        .hero {
+            background: linear-gradient(135deg, #FFB6C1, #FF69B4, #FF85A2);
+            color: white;
+            text-align: center;
+            padding: 60px 20px 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: shimmer 6s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, 20px); }
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            position: relative; z-index: 1;
+        }
+        .hero .subtitle {
+            font-size: 1.05rem;
+            margin-top: 12px;
+            opacity: 0.95;
+            position: relative; z-index: 1;
+            font-weight: 300;
+        }
+        .hero .trip-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 8px 24px;
+            border-radius: 50px;
+            margin-top: 18px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative; z-index: 1;
+        }
+
+        /* ─── Sticky Tabs ─── */
+        .tab-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: white;
+            box-shadow: 0 2px 12px rgba(255,105,180,0.15);
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            padding: 10px 12px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .tab-bar::-webkit-scrollbar { display: none; }
+        .tab-btn {
+            flex-shrink: 0;
+            border: none;
+            background: #FFF0F3;
+            color: #999;
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.25s;
+            white-space: nowrap;
+        }
+        .tab-btn:hover { background: #FFD1DC; color: #C44569; }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #FF69B4, #FF85A2);
+            color: white;
+            box-shadow: 0 2px 8px rgba(255,105,180,0.35);
+        }
+
+        /* ─── Container ─── */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+        }
+
+        /* ─── Day Card ─── */
+        .day-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(255,105,180,0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: transform 0.2s;
+            scroll-margin-top: 70px;
+        }
+        .day-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255,105,180,0.15);
+        }
+        .day-header {
+            padding: 20px 28px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .day-header .emoji { font-size: 1.5rem; }
+        .day-header .date {
+            font-size: 0.82rem;
+            font-weight: 300;
+            opacity: 0.9;
+            margin-left: auto;
+        }
+        .day-1 .day-header { background: linear-gradient(135deg, #FF6B9D, #C44569); }
+        .day-2 .day-header { background: linear-gradient(135deg, #F8A5C2, #E77F9A); }
+        .day-3 .day-header { background: linear-gradient(135deg, #FF7979, #E55039); }
+        .day-4 .day-header { background: linear-gradient(135deg, #F19066, #E66767); }
+        .day-5 .day-header { background: linear-gradient(135deg, #78E08F, #38ADA9); }
+        .day-6 .day-header { background: linear-gradient(135deg, #82CCDD, #3C6382); }
+        .day-7 .day-header { background: linear-gradient(135deg, #E77F67, #CF6A87); }
+
+        .day-content { padding: 24px 28px; }
+
+        /* ─── Timeline ─── */
+        .timeline-item {
+            position: relative;
+            padding-left: 28px;
+            padding-bottom: 24px;
+            border-left: 2px solid #FFD1DC;
+            margin-left: 8px;
+        }
+        .timeline-item:last-child {
+            border-left: 2px solid transparent;
+            padding-bottom: 0;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -7px; top: 6px;
+            width: 12px; height: 12px;
+            background: #FF69B4;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #FFD1DC;
+        }
+        .time { font-weight: 700; color: #FF69B4; font-size: 0.95rem; }
+        .location { font-weight: 600; color: #2b2d31; font-size: 1.02rem; }
+        .description { color: #555; font-size: 0.92rem; margin-top: 4px; }
+
+        /* ─── Sub Details ─── */
+        .sub-details { margin-top: 8px; padding-left: 16px; }
+        .sub-details li {
+            font-size: 0.88rem; color: #666;
+            margin-bottom: 4px; list-style: none;
+            position: relative; padding-left: 14px;
+        }
+        .sub-details li::before {
+            content: '•'; position: absolute; left: 0;
+            color: #FFB6C1; font-weight: bold;
+        }
+
+        /* ─── Image Grid ─── */
+        .image-grid {
+            display: flex; flex-wrap: wrap;
+            gap: 10px; margin-top: 12px;
+        }
+        .image-grid img {
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .image-grid img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 16px rgba(255,105,180,0.25);
+        }
+        .image-grid.two img { width: calc(50% - 5px); height: 180px; }
+        .image-grid.single img {
+            width: 100%; max-width: 320px;
+            height: auto; max-height: 300px;
+        }
+
+        /* ─── Detail Box ─── */
+        .detail-box {
+            background: #FFF5F7;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-top: 10px;
+            font-size: 0.88rem;
+            border-left: 3px solid #FFB6C1;
+        }
+        .detail-box p { margin-bottom: 4px; color: #555; }
+
+        /* ─── Tips ─── */
+        .tips-card {
+            background: linear-gradient(135deg, #FFF5F7, #FFE4EC);
+            border-radius: 20px;
+            padding: 28px;
+            margin-top: 10px;
+            border: 1px solid #FFD1DC;
+        }
+        .tips-card h3 { color: #FF69B4; font-size: 1.15rem; margin-bottom: 14px; }
+        .tips-card li {
+            font-size: 0.92rem; color: #555;
+            margin-bottom: 8px; list-style: none;
+            padding-left: 22px; position: relative;
+        }
+        .tips-card li::before { content: '💡'; position: absolute; left: 0; }
+
+        /* ─── Footer ─── */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #FFB6C1;
+            font-size: 1.5rem;
+        }
+
+        /* ─── Lightbox ─── */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            cursor: zoom-out;
+            animation: fadeIn 0.2s;
+        }
+        .lightbox.show { display: flex; }
+        .lightbox img {
+            max-width: 92vw;
+            max-height: 88vh;
+            border-radius: 16px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+            object-fit: contain;
+            animation: zoomIn 0.25s ease-out;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 16px; right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .lightbox-close:hover { background: rgba(255,255,255,0.35); }
+        .lightbox-caption {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            text-align: center;
+            max-width: 80%;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes zoomIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* ─── Links ─── */
+        a { color: #FF69B4; text-decoration: none; border-bottom: 1px dotted #FFB6C1; }
+        a:hover { color: #C44569; }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2rem; }
+            .hero .subtitle { font-size: 0.9rem; }
+            .day-content { padding: 18px 20px; }
+            .day-header { font-size: 1.05rem; padding: 16px 20px; }
+            .image-grid.two img { width: 100%; height: 160px; }
+            .tab-btn { font-size: 0.75rem; padding: 7px 11px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero -->
+    <div class="hero">
+        <h1>Pan&Por in Shanghai 💗</h1>
+        <p class="subtitle">สรุปแผนการเดินทางท่องเที่ยวเซี่ยงไฮ้</p>
+        <div class="trip-badge">✈️ 7 วัน 6 คืน &nbsp;|&nbsp; 8–14 เม.ย. 2026</div>
+    </div>
+
+    <!-- Sticky Tab Bar -->
+    <nav class="tab-bar" id="tabBar">
+        <button class="tab-btn active" data-target="day1">✈️ Day 1</button>
+        <button class="tab-btn" data-target="day2">🏙️ Day 2</button>
+        <button class="tab-btn" data-target="day3">🏰 Day 3</button>
+        <button class="tab-btn" data-target="day4">☕ Day 4</button>
+        <button class="tab-btn" data-target="day5">🌳 Day 5</button>
+        <button class="tab-btn" data-target="day6">❄️ Day 6</button>
+        <button class="tab-btn" data-target="day7">✈️ Day 7</button>
+        <button class="tab-btn" data-target="tips">💡 Tips</button>
+    </nav>
+
+    <div class="container">
+
+        <!-- Day 1 -->
+        <div class="day-card day-1" id="day1">
+            <div class="day-header">
+                <span class="emoji">✈️</span>
+                Day 1: Welcome to Shanghai
+                <span class="date">8 เม.ย. 2026</span>
+            </div>
+            <div class="day-content">
+                <div class="timeline-item">
+                    <span class="time">14:30 น.</span> – <span class="location">เช็คอินที่สนามบินสุวรรณภูมิ (BKK)</span>
+                    <p class="description">เคาน์เตอร์สายการบิน <strong>Spring Airlines (9C)</strong> 9C7282 | Economy | Airbus A320<br>แนะนำให้เตรียมเอกสารการจองที่พักและแอป Alipay/WeChat ให้พร้อม</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">16:35 น.</span> – <span class="location">ออกเดินทางจากกรุงเทพฯ</span>
+                    <p class="description">มุ่งหน้าสู่เซี่ยงไฮ้</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">22:10 น.</span> – <span class="location">เดินทางถึงสนามบินผู่ตง (PVG)</span>
+                    <p class="description">Terminal 2 ผ่านด่านตรวจคนเข้าเมืองและรับกระเป๋าเดินทาง</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">23:30 น.</span> – <span class="location">เข้าสู่ที่พัก Hanting Shanghai Bund World Metro Station Hotel</span>
+                    <ul class="sub-details">
+                        <li>เช่ารถมารับส่งถึงรรจ้า เริ่ดๆ</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Day 2 -->
+        <div class="day-card day-2" id="day2">
+            <div class="day-header">
+                <span class="emoji">🏙️</span>
+                Day 2: The Bund & Lujiazui
+                <span class="date">9 เม.ย. 2026</span>
+            </div>
+            <div class="day-content">
+                <div class="timeline-item">
+                    <span class="time">10:00 น.</span> – <span class="location">มื้อเที่ยงที่ Lailai Xiaolong</span>
+                    <p class="description">ลิ้มรสเสี่ยวหลงเปามันปูชื่อดัง (สาย 8 สถานี People's Square ทางออก 6)</p>
+                    <ul class="sub-details">
+                        <li>เสี่ยวหลงเปาปูคืออร่อยแสงออกปาก แป้งบาง ไส้อร่อย</li>
+                        <li>แนะนำให้มาวันธรรมดา (จ-ศ) คนจะน้อย</li>
+                        <li>วันเสาร์-อาทิตย์ คนเยอะตั้งแต่เปิดร้าน ทั้งคนจีนและคนไทย แต่ร้านรันคิวไม่นาน</li>
+                    </ul>
+                    <div class="image-grid two">
+                        <img src="images/image5.png" alt="Lailai Xiaolong">
+                        <img src="images/image14.png" alt="Xiao Long Bao">
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">13:00 น.</span> – <span class="location">เดินเล่นที่ The Bund (หาดไว่ทาน)</span>
+                    <p class="description">ถ่ายรูปกับรูปปั้นกระทิง (The Bund Bull) และชมวิวตึกระฟ้าฝั่งผู่ตง</p>
+                    <div class="image-grid two">
+                        <img src="images/image21.png" alt="The Bund">
+                        <img src="images/image23.png" alt="The Bund view">
+                    </div>
+                    <div class="image-grid two" style="margin-top: 10px;">
+                        <img src="images/image2.png" alt="The Bund panorama" style="height: 250px;">
+                        <img src="images/image24.png" alt="The Bund skyline" style="height: 250px;">
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">16:00 น.</span> – <span class="location">ข้ามฝั่งไปย่าน Lujiazui</span>
+                    <p class="description">ชมความอลังการของตึก Shanghai Tower และหอไข่มุก (Oriental Pearl)</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">18:30 น.</span> – <span class="location">จิบเครื่องดื่มพร้อมชมวิวที่ Cocina 19</span>
+                    <p class="description">(The Bund Area) ร้านอาหารสเปนที่ตั้งอยู่ในย่าน The Bund ของเซี่ยงไฮ้</p>
+                    <div class="detail-box">
+                        <p>⭐ จุดเด่น: เมนูทาปาสแบบดั้งเดิม เช่น patatas bravas, tortilla, กุ้งกระเทียม และ paella</p>
+                        <p>💰 ราคาเฉลี่ย: 200-400¥ ต่อคน</p>
+                        <p>📍 เลขที่ 19 ถนนฝูโจว, เขตหวงผู่, เซี่ยงไฮ้</p>
+                        <p>🚇 สถานี Nanjing East Road สาย 2 และสาย 10 (เดินประมาณ 10 นาที)</p>
+                        <p>🍽️ เมนูแนะนำ: พาเอลญ่า, ทาปาส, ชูโรส พร้อมซอสช็อกโกแลต</p>
+                        <p>⏰ จ-พฤ: 10:00–00:00 / ศ-อา: 10:00–01:00</p>
+                    </div>
+                    <div class="image-grid two" style="margin-top: 12px;">
+                        <img src="images/image32.png" alt="Cocina 19">
+                        <img src="images/image9.jpg" alt="Cocina 19 food">
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">20:00 น.</span> – <span class="location">มื้อเย็นที่ Long Time Ago Mutton Chuan</span>
+                    <p class="description">ปิ้งย่างเสียบไม้สุดฮิต ที่มีเจลแป้ะหัวร้อน (แนะนำจองคิวผ่าน WeChat ล่วงหน้า)</p>
+                    <div class="detail-box">
+                        <p>📍 สาขา Nanjing West Road 818 Plaza Branch</p>
+                        <p>🏮 很久以前羊肉串(南京西路818广场店)</p>
+                        <p>⏰ 11:00–14:00 / 16:30–01:00</p>
+                        <p>📍 <a href="https://surl.amap.com/2W5wVBmBV61I" target="_blank">แผนที่ Amap</a></p>
+                        <p>แนะนำให้ไปช่วงร้านเปิดเลย ได้กินแน่นอน</p>
+                    </div>
+                    <div class="image-grid single" style="margin-top: 12px;">
+                        <img src="images/image11.png" alt="Mutton Chuan" style="max-height: 320px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Day 3 -->
+        <div class="day-card day-3" id="day3">
+            <div class="day-header">
+                <span class="emoji">🏰</span>
+                Day 3: Disneyland
+                <span class="date">10 เม.ย. 2026</span>
+            </div>
+            <div class="day-content">
+                <div class="timeline-item">
+                    <span class="time">07:30 น.</span> – <span class="location">ออกเดินทางไป Shanghai Disneyland</span>
+                    <p class="description">สาย 11 สถานี Disney Resort ทางออก 4</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">08:30 น.</span> – <span class="location">สวนสนุก</span>
+                    <p class="description">แนะนำโซน Zootopia, Tron Lightcycle Power Run และ Pirates of the Caribbean</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">12:30 น.</span> – <span class="location">มื้อเที่ยงที่ Sichuan Cuisine (Disneytown)</span>
+                    <p class="description">ทานอาหารจีนรสจัดจ้านเติมพลัง</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">20:30 น.</span> – <span class="location">ชมการแสดงพลุและแสงสีเสียง</span>
+                    <p class="description">สุดตระการตาหน้าปราสาท</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">21:30 น.</span> – <span class="location">มื้อดึกที่ RouRou DaMi</span>
+                    <p class="description">แฮมเบิร์กญี่ปุ่นชื่อดัง ที่ห้าง Raffles City (สาย 8 สถานี People's Square ทางออก 1)</p>
+                    <div class="image-grid single">
+                        <img src="images/image8.png" alt="RouRou DaMi">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Day 4 -->
+        <div class="day-card day-4" id="day4">
+            <div class="day-header">
+                <span class="emoji">☕</span>
+                Day 4: City Walk & Cafe
+                <span class="date">11 เม.ย. 2026</span>
+            </div>
+            <div class="day-content">
+                <div class="timeline-item">
+                    <span class="time">10:00 น.</span> – <span class="location">ถ่ายรูปวิวเมืองมุมกว้างที่ North Bund Greenland</span>
+                    <p class="description">สาย 10 สถานี Intl Cruise Terminal ทางออก 3</p>
+                    <div class="image-grid single">
+                        <img src="images/image17.png" alt="North Bund Greenland" style="max-height: 280px;">
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">12:00 น.</span> – <span class="location">มื้อเที่ยงที่ Supreme Crab 1930</span>
+                    <p class="description">ลิ้มรสบะหมี่มันปูเข้มข้น</p>
+                    <div class="detail-box">
+                        <p>🦀 สั่งชุดหมี่มันปู ¥108 กิน 2 คนกำลังดี เส้นบะหมี่เหนียวนุ่ม ราดด้วยซอสมันปูเข้มข้น</p>
+                        <p>🍰 ในเซ็ตยังมี หมูยูนนานทอด กรอบนอก นุ่มใน เสิร์ฟคู่กับน้ำจิ้มกลิ่นหอมเฉพาะตัว</p>
+                        <p>📍 ห้าง New World Daimaru ชั้น B2 (ตรงข้าม Pop Mart) บนถนนนานกิงตะวันออก</p>
+                        <p>🚇 สาย 2 สถานี East Nanjing Road ทางออก 2</p>
+                    </div>
+                    <div class="image-grid single" style="margin-top: 12px;">
+                        <img src="images/image7.png" alt="Supreme Crab 1930">
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">14:00 น.</span> – <span class="location">เดินเล่นย่าน Anfu Road</span>
+                    <p class="description">ถนนสุดฮิปที่เต็มไปด้วยคาเฟ่และร้านบูติก (สาย 1 สถานี Changshu Rd. ทางออก 8)</p>
+                    <ul class="sub-details">
+                        <li>เดินต่อมาตามถนน Wukang เราจะเจอกับย่านเดินเล่น ช้อปปิ้งในพื้นที่สัมปทานฝรั่งเศสในอดีตของเซี่ยงไฮ้</li>
+                    </ul>
+                    <div class="image-grid single" style="margin-top: 12px;">
+                        <img src="images/image16.png" alt="Anfu Road">
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">15:30 น.</span> – <span class="location">แวะคาเฟ่ AMAM (London Bakery Town)</span>
+                    <p class="description">ชมขนมปังน้องหมาสุดน่ารัก</p>
+                    <div class="image-grid single" style="margin-top: 12px;">
+                        <img src="images/image31.jpg" alt="AMAM Bakery" style="max-height: 280px;">
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">17:00 น.</span> – <span class="location">ซื้อของว่างร้านดัง Bao's Pastry (鲍师傅)</span>
+                    <p class="description">ลองเค้กหมูหยองอันเลื่องชื่อ</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">18:30 น.</span> – <span class="location">เดินเล่น West Nanjing Road</span>
+                    <p class="description">แวะ Starbucks Reserve Roastery และร้านขนม Butterful & Creamorous</p>
+                    <div class="image-grid single" style="margin-top: 12px;">
+                        <img src="images/image30.jpg" alt="Starbucks Reserve Roastery" style="max-height: 280px;">
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">20:00 น.</span> – <span class="location">มื้อเย็นที่ TaiEr Sauerkraut Fish</span>
+                    <p class="description">ปลากะพงต้มผักกาดดอง (ห้าง Mosaic Mall)</p>
+                    <div class="image-grid single" style="margin-top: 12px;">
+                        <img src="images/image12.png" alt="TaiEr Sauerkraut Fish">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Day 5 -->
+        <div class="day-card day-5" id="day5">
+            <div class="day-header">
+                <span class="emoji">🌳</span>
+                Day 5: Shopping
+                <span class="date">12 เม.ย. 2026</span>
+            </div>
+            <div class="day-content">
+                <div class="timeline-item">
+                    <span class="time">10:00 น.</span> – <span class="location">ชมตึก 1000 Trees</span>
+                    <p class="description">สถาปัตยกรรมสวนลอยฟ้าสุดแปลกตา (สาย 13 สถานี Jiangning Road ทางออก 1)</p>
+                    <div class="image-grid single">
+                        <img src="images/image20.jpg" alt="1000 Trees">
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">12:30 น.</span> – <span class="location">มื้อเที่ยงและดื่มชาผลไม้ที่ Hey Tea (喜茶)</span>
+                    <p class="description">ห้าง Global Harbor Mall</p>
+                    <div class="image-grid single" style="margin-top: 12px;">
+                        <img src="images/image1.jpg" alt="Hey Tea">
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">15:00 น.</span> – <span class="location">ช้อปปิ้งย่าน Huaihai Road</span>
+                    <p class="description">และเดินชมย่านเมืองเก่า Xintiandi</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">16:30 น.</span> – <span class="location">พักดื่มชาที่ร้าน Ama Handmade (阿嬷手作)</span>
+                    <p class="description">ร้านชานมทำมือชื่อดัง</p>
+                    <div class="image-grid single" style="margin-top: 12px;">
+                        <img src="images/image13.jpg" alt="Ama Handmade">
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">19:00 น.</span> – <span class="location">มื้อเย็นสุดพิเศษที่ New Sukiyaki</span>
+                    <p class="description">สุกี้ยากี้เนื้อพรีเมียมสไตล์ญี่ปุ่น</p>
+                    <div class="image-grid single" style="margin-top: 12px;">
+                        <img src="images/image10.jpg" alt="New Sukiyaki" style="max-height: 260px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Day 6 -->
+        <div class="day-card day-6" id="day6">
+            <div class="day-header">
+                <span class="emoji">❄️</span>
+                Day 6: Snow World
+                <span class="date">13 เม.ย. 2026</span>
+            </div>
+            <div class="day-content">
+                <div class="timeline-item">
+                    <span class="time">09:00 น.</span> – <span class="location">Shanghai Yaoxue Ice and Snow World</span>
+                    <p class="description">สกีรีสอร์ทในร่มที่ใหญ่ที่สุดในโลก</p>
+                    <div class="detail-box">
+                        <p>⛷️ แบ่งเป็น 2 โซน: โซน Snow Play และโซนสกี โดยจะใช้ตั๋วจะคนละประเภทกัน</p>
+                        <p>🎿 โซน Snow Play เล่นได้ทั้งวัน รวมชุดกับรองเท้าแล้ว ควรพกถุงมือและหมวกมาด้วย</p>
+                        <p>🏔️ กิจกรรมมีทั้งแนว adventure ไปจนถึงแนวเดินชมแสงเหนือชิวๆ</p>
+                        <p>🗄️ มี Locker ค่าบริการ 50 หยวน ใช้ได้ทั้งวัน (จ่ายผ่าน WeChat)</p>
+                        <p>🍔 มีร้านอาหารอยู่ชั้น 2 ในตึกก่อนเข้าไปเล่น และร้านกาแฟ/ตู้เครื่องดื่มข้างใน</p>
+                        <p>🚇 Metro Line 16 สถานี Lingang Avenue exit 2 (เดินอีกประมาณ 700 เมตร)</p>
+                        <p>⏰ จาก East Nanjing ใช้เวลาประมาณ 1 ชั่วโมงครึ่ง</p>
+                        <p>📌 เช็คราคาตั๋วจาก trip หรือ klook ได้เลย</p>
+                    </div>
+                    <div class="image-grid single" style="margin-top: 12px;">
+                        <img src="images/image29.png" alt="Snow World" style="max-height: 260px;">
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">14:30 น.</span> – <span class="location">ไหว้พระขอพรที่ วัดจิ้งอัน (Jing'An Temple)</span>
+                    <p class="description">วัดสีทองอร่ามกลางเมือง (สาย 14 สถานี Jing'An Temple ทางออก 14)</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">16:30 น.</span> – <span class="location">ดื่มชาที่ร้าน Chi Cha San Qian (吃茶三千)</span>
+                    <p class="description">ชาชงสดระดับรางวัลจากไต้หวัน</p>
+                    <div class="image-grid single" style="margin-top: 12px;">
+                        <img src="images/image3.jpg" alt="Chi Cha San Qian" style="max-height: 230px;">
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">18:00 น.</span> – <span class="location">เดินชมโคมไฟที่ สวนอวี้หยวน (Yu Garden)</span>
+                    <p class="description">สวนและสถาปัตยกรรมยามค่ำคืน (สาย 10 สถานี Yuyuan Garden ทางออก 7)</p>
+                    <div class="image-grid single" style="margin-top: 12px;">
+                        <img src="images/image18.png" alt="Yu Garden">
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">20:00 น.</span> – <span class="location">กินไรก้กินนนนน</span>
+                    <p class="description">อิสระมื้อเย็น!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Day 7 -->
+        <div class="day-card day-7" id="day7">
+            <div class="day-header">
+                <span class="emoji">✈️</span>
+                Day 7: เดินทางกลับโดยสวัสดิภาพ
+                <span class="date">14 เม.ย. 2026</span>
+            </div>
+            <div class="day-content">
+                <div class="timeline-item">
+                    <span class="time">06:30 น.</span> – <span class="location">เดินทางไปสนามบินผู่ตง (PVG)</span>
+                    <p class="description">แนะนำให้เผื่อเวลาเช็คอินที่ Terminal 2</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">09:35 น.</span> – <span class="location">ออกเดินทางจากเซี่ยงไฮ้</span>
+                    <p class="description">สายการบิน <strong>Cathay Pacific (CX)</strong> CX365 | Economy | Airbus A330-300</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">12:30 น.</span> – <span class="location">เดินทางถึงฮ่องกง (HKG)</span>
+                    <p class="description">เพื่อรอต่อเครื่อง (Transit) – HKG Terminal 1</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">14:30 น.</span> – <span class="location">ออกเดินทางจากฮ่องกง</span>
+                    <p class="description">Cathay Pacific CX751 | Economy | Airbus A330-300</p>
+                </div>
+                <div class="timeline-item">
+                    <span class="time">16:30 น.</span> – <span class="location">เดินทางถึงสนามบินสุวรรณภูมิ (BKK)</span>
+                    <p class="description">โดยสวัสดิภาพ 💗</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips -->
+        <div class="tips-card" id="tips">
+            <h3>💡 คำแนะนำเพิ่มเติม</h3>
+            <ul style="list-style: none; padding: 0;">
+                <li>ควรโหลดแอป <strong>Alipay/WeChat Pay</strong> สำหรับการใช้จ่าย และ <strong>Amap/Baidu Maps</strong> สำหรับการนำทาง</li>
+                <li>การจองคิวร้านอาหารชื่อดัง แนะนำให้เช็คผ่านแอป <strong>Dianping</strong> ครับ</li>
+            </ul>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            💗💗💗💗💗 คถบิบิ๊ 💗💗💗💗💗<br>
+            <span style="font-size: 0.9rem; color: #999;">ใครคถ เค้าไง</span>
+        </div>
+
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <img src="" alt="" id="lightboxImg">
+        <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+
+    <script>
+        // ─── Tab Navigation ───
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const sections = [];
+
+        tabBtns.forEach(btn => {
+            const targetId = btn.dataset.target;
+            const section = document.getElementById(targetId);
+            if (section) sections.push({ btn, section, id: targetId });
+
+            btn.addEventListener('click', () => {
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Highlight active tab on scroll
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    const activeBtn = document.querySelector(`.tab-btn[data-target="${id}"]`);
+                    if (activeBtn) {
+                        activeBtn.classList.add('active');
+                        // Auto-scroll tab into view
+                        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    }
+                }
+            });
+        }, { rootMargin: '-80px 0px -60% 0px', threshold: 0 });
+
+        sections.forEach(s => observer.observe(s.section));
+
+        // ─── Lightbox ───
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxCaption = document.getElementById('lightboxCaption');
+        const lightboxClose = document.getElementById('lightboxClose');
+
+        document.querySelectorAll('.image-grid img').forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxCaption.textContent = img.alt || '';
+                lightbox.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        function closeLightbox() {
+            lightbox.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        lightboxClose.addEventListener('click', e => { e.stopPropagation(); closeLightbox(); });
+        lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+    </script>
+
+</body>
+</html>
